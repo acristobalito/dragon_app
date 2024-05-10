@@ -1,4 +1,5 @@
 import 'package:dragon_store/domain/entities/dragon.dart';
+import 'package:dragon_store/domain/entities/form_screen_params.dart';
 import 'package:dragon_store/ui/screens/screens.dart';
 import 'package:go_router/go_router.dart';
 
@@ -12,14 +13,16 @@ final appRouter = GoRouter(initialLocation: HomeScreen.path, routes: [
       path: DetailScreen.path,
       name: DetailScreen.name,
       builder: (context, state) {
-        final index = state.extra as int;
-        return DetailScreen(indexSend: index);
+        final dragonSend = state.extra as Dragon;
+        return DetailScreen(dragonSend: dragonSend);
       }),
   GoRoute(
       path: FormScreen.path,
       name: FormScreen.name,
       builder: (context, state) {
-        final dragon = state.extra as Dragon?;
-        return FormScreen(dragon: dragon);
+        final params = state.extra as FormScreenParams?;
+        return FormScreen(
+          params: params,
+        );
       }),
 ]);

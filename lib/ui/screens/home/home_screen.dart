@@ -1,11 +1,13 @@
 import 'package:dragon_store/config/foundations/colors.dart';
 import 'package:dragon_store/config/foundations/typo.dart';
+import 'package:dragon_store/domain/entities/form_screen_params.dart';
 import 'package:dragon_store/ui/providers/dragon_list_provider.dart';
 import 'package:dragon_store/ui/screens/screens.dart';
 import 'package:dragon_store/ui/widgets/custom_cards/dragon_item_card.dart';
 import 'package:dragon_store/ui/widgets/shared/custom_image_background.dart';
 import 'package:dragon_store/ui/widgets/shared/text_extension.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -38,7 +40,8 @@ class HomeScreen extends StatelessWidget {
             ? const _EmptyView()
             : const CustomBackgroundImage(
                 pathImage: 'assets/images/island.png'),
-        _DragonsListView(dragonListProvider)
+        if (dragonListProvider.dragonsList.isNotEmpty)
+          _DragonsListView(dragonListProvider)
       ])),
       floatingActionButton: _CustomFloatingActionButton(
         onClick: () {
@@ -58,17 +61,53 @@ class _DragonsListView extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: ListView.builder(
-          itemBuilder: (context, index) => DragonItemCard(
-                dragon: dragonListProvider.dragonsList[index],
-                onTap: () async {
-                  final bool? isDelete = await context
-                      .pushNamed<bool>(DetailScreen.name, extra: index);
-                  if (isDelete ?? false) {
-                    dragonListProvider
-                        .removeDragon(dragonListProvider.dragonsList[index]);
-                  }
-                },
-              ),
+          itemBuilder: (context, index) {
+            if (dragonListProvider.dragonsList.isNotEmpty) {
+              return Slidable(
+                closeOnScroll: true,
+                key: Key(index.toString()),
+                startActionPane:
+                    ActionPane(motion: const BehindMotion(), children: [
+                  SlidableAction(
+                    borderRadius: const BorderRadius.all(Radius.circular(20)),
+                    autoClose: true,
+                    onPressed: (context) {
+                      dragonListProvider
+                          .removeDragon(dragonListProvider.dragonsList[index]);
+                    },
+                    foregroundColor: ColorsFundation.errorColor,
+                    icon: Icons.delete,
+                  ),
+                  SlidableAction(
+                    borderRadius: const BorderRadius.all(Radius.circular(20)),
+                    autoClose: true,
+                    onPressed: (context) {
+                      context.pushNamed(FormScreen.name,
+                          extra: FormScreenParams(
+                              fromHome: true,
+                              dragon: dragonListProvider.dragonsList[index]));
+                    },
+                    foregroundColor: ColorsFundation.primaryColor,
+                    icon: Icons.edit,
+                  ),
+                ]),
+                child: DragonItemCard(
+                  dragon: dragonListProvider.dragonsList[index],
+                  onTap: () async {
+                    final bool? isDelete = await context.pushNamed<bool>(
+                        DetailScreen.name,
+                        extra: dragonListProvider.dragonsList[index]);
+                    if (isDelete ?? false) {
+                      dragonListProvider
+                          .removeDragon(dragonListProvider.dragonsList[index]);
+                    }
+                  },
+                ),
+              );
+            } else {
+              return null;
+            }
+          },
           itemCount: dragonListProvider.dragonsList.length),
     );
   }

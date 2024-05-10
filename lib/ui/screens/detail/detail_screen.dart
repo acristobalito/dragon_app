@@ -1,7 +1,7 @@
 import 'package:dragon_store/config/foundations/colors.dart';
 import 'package:dragon_store/domain/entities/dragon.dart';
 import 'package:dragon_store/domain/entities/dragon_element.dart';
-import 'package:dragon_store/ui/providers/dragon_list_provider.dart';
+import 'package:dragon_store/ui/providers/detail_provider.dart';
 import 'package:dragon_store/ui/screens/form/form_screen.dart';
 import 'package:dragon_store/ui/widgets/shared/custom_button.dart';
 import 'package:dragon_store/ui/widgets/shared/custom_image.dart';
@@ -13,23 +13,20 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class DetailScreen extends StatelessWidget {
-  final int indexSend;
+  final Dragon dragonSend;
 
   static const String name = 'detail_screen';
   static const String path = '/detail';
-  const DetailScreen({super.key, required this.indexSend});
+  const DetailScreen({super.key, required this.dragonSend});
 
   @override
   Widget build(BuildContext context) {
-    final dragonListProvider = context.watch<DragonListProvider>();
-    final Dragon dragon = dragonListProvider.dragonsList[indexSend];
-
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Dragon ${dragon.name}').form(
+        title: Text('Dragon ${dragonSend.name}').form(
             size: 25,
-            color: ElementDragonUtils.getColorElement(dragon.element)),
+            color: ElementDragonUtils.getColorElement(dragonSend.element)),
       ),
       body: SafeArea(
           child: Stack(
@@ -39,7 +36,7 @@ class DetailScreen extends StatelessWidget {
             boxFit: BoxFit.cover,
             opacity: 0.5,
           ),
-          _DetailDragonView(dragon, dragonListProvider)
+          _DetailDragonView(dragonSend)
         ],
       )),
     );
@@ -48,11 +45,12 @@ class DetailScreen extends StatelessWidget {
 
 class _DetailDragonView extends StatelessWidget {
   final Dragon dragon;
-  final DragonListProvider dragonListProvider;
-  const _DetailDragonView(this.dragon, this.dragonListProvider);
+  const _DetailDragonView(this.dragon);
 
   @override
   Widget build(BuildContext context) {
+    final descriptionProvider = context.watch<DetailProvider>();
+    descriptionProvider.setParameters(dragon);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: SingleChildScrollView(
@@ -63,18 +61,19 @@ class _DetailDragonView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomImageView(
-                  element: dragon.element,
+                  element: descriptionProvider.dragonSend.element,
                   onlyImage: true,
                   size: 200,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 20),
-                  child: ElementItemView(element: dragon.element),
+                  child: ElementItemView(
+                      element: descriptionProvider.dragonSend.element),
                 )
               ],
             ),
             const SizedBox(height: 20),
-            _CustomContainer(dragon: dragon),
+            _CustomContainer(dragon: descriptionProvider.dragonSend),
             const SizedBox(height: 20),
             CustomButtonView(
               buttonColor: ColorsFundation.buttonAtackColor!,
@@ -89,7 +88,8 @@ class _DetailDragonView extends StatelessWidget {
               buttonColor: ColorsFundation.primaryColor,
               textButton: 'Editar',
               onClick: () {
-                context.pushNamed(FormScreen.name, extra: dragon);
+                context.pushNamed(FormScreen.name,
+                    extra: descriptionProvider.dragonSend);
               },
             ),
             const SizedBox(height: 10),
