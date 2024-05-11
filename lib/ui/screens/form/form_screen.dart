@@ -2,6 +2,8 @@ import 'package:dragon_store/config/foundations/colors.dart';
 import 'package:dragon_store/config/foundations/typo.dart';
 import 'package:dragon_store/domain/entities/dragon.dart';
 import 'package:dragon_store/domain/entities/dragon_element.dart';
+import 'package:dragon_store/domain/entities/form_screen_params.dart';
+import 'package:dragon_store/ui/providers/detail_provider.dart';
 import 'package:dragon_store/ui/providers/dragon_list_provider.dart';
 import 'package:dragon_store/ui/providers/form_provider.dart';
 import 'package:dragon_store/ui/widgets/element_picker/element_picker.dart';
@@ -16,10 +18,10 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class FormScreen extends StatelessWidget {
-  final Dragon? dragon;
+  final FormScreenParams? params;
   static const String name = 'form_screen';
   static const String path = '/form';
-  const FormScreen({super.key, this.dragon});
+  const FormScreen({super.key, this.params});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +45,8 @@ class FormScreen extends StatelessWidget {
             children: [
               const CustomBackgroundImage(
                   pathImage: 'assets/images/arbolcria.jpeg'),
-              _DragonFormView(dragon: dragon)
+              _DragonFormView(
+                  dragon: params?.dragon, fromHome: params?.fromHome)
             ],
           ),
         ),
@@ -54,11 +57,13 @@ class FormScreen extends StatelessWidget {
 
 class _DragonFormView extends StatelessWidget {
   final Dragon? dragon;
-  const _DragonFormView({this.dragon});
+  final bool? fromHome;
+  const _DragonFormView({this.dragon, this.fromHome});
 
   @override
   Widget build(BuildContext context) {
     final dragonListProvider = context.watch<DragonListProvider>();
+    final detailProvider = context.watch<DetailProvider>();
     final formProvider = context.watch<FormProvider>();
     formProvider.getParameters(dragon);
     return Container(
@@ -155,9 +160,14 @@ class _DragonFormView extends StatelessWidget {
               onClick: () {
                 final newDragon = formProvider.createDragon();
                 if (newDragon == null) return;
-                dragon != null
-                    ? dragonListProvider.updateDragon(newDragon, dragon!)
-                    : dragonListProvider.addDragon(newDragon);
+                if (dragon != null) {
+                  dragonListProvider.updateDragon(newDragon, dragon!);
+                  if (fromHome != true) {
+                    detailProvider.updateParameters(newDragon);
+                  }
+                } else {
+                  dragonListProvider.addDragon(newDragon);
+                }
                 context.pop();
               },
             ),
