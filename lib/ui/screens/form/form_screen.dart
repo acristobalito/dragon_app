@@ -46,7 +46,10 @@ class FormScreen extends StatelessWidget {
               const CustomBackgroundImage(
                   pathImage: 'assets/images/arbolcria.jpeg'),
               _DragonFormView(
-                  dragon: params?.dragon, fromHome: params?.fromHome)
+                dragon: params?.dragon,
+                fromHome: params?.fromHome,
+                detailProvider: params?.detailProvider,
+              )
             ],
           ),
         ),
@@ -57,13 +60,13 @@ class FormScreen extends StatelessWidget {
 
 class _DragonFormView extends StatelessWidget {
   final Dragon? dragon;
+  final DetailProvider? detailProvider;
   final bool? fromHome;
-  const _DragonFormView({this.dragon, this.fromHome});
+  const _DragonFormView({this.dragon, this.fromHome, this.detailProvider});
 
   @override
   Widget build(BuildContext context) {
     final dragonListProvider = context.watch<DragonListProvider>();
-    final detailProvider = context.watch<DetailProvider>();
     final formProvider = context.watch<FormProvider>();
     formProvider.getParameters(dragon);
     return Container(
@@ -163,7 +166,7 @@ class _DragonFormView extends StatelessWidget {
                 if (dragon != null) {
                   dragonListProvider.updateDragon(newDragon, dragon!);
                   if (fromHome != true) {
-                    detailProvider.updateParameters(newDragon);
+                    detailProvider?.updateParameters(newDragon);
                   }
                 } else {
                   dragonListProvider.addDragon(newDragon);
