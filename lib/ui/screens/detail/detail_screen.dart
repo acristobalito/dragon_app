@@ -1,6 +1,7 @@
 import 'package:dragon_store/config/foundations/colors.dart';
 import 'package:dragon_store/domain/entities/dragon.dart';
 import 'package:dragon_store/domain/entities/dragon_element.dart';
+import 'package:dragon_store/domain/entities/form_screen_params.dart';
 import 'package:dragon_store/ui/providers/detail_provider.dart';
 import 'package:dragon_store/ui/screens/form/form_screen.dart';
 import 'package:dragon_store/ui/widgets/shared/custom_button.dart';
@@ -21,12 +22,32 @@ class DetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => DetailProvider()),
+      ],
+      child: _ScaffoldDescription(dragonSend: dragonSend),
+    );
+  }
+}
+
+class _ScaffoldDescription extends StatelessWidget {
+  final Dragon dragonSend;
+  const _ScaffoldDescription({
+    required this.dragonSend,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final descriptionProvider = context.watch<DetailProvider>();
+    descriptionProvider.setParameters(dragonSend);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Dragon ${dragonSend.name}').form(
+        title: Text('Dragon ${descriptionProvider.dragonSend.name}').form(
             size: 25,
-            color: ElementDragonUtils.getColorElement(dragonSend.element)),
+            color: ElementDragonUtils.getColorElement(
+                descriptionProvider.dragonSend.element)),
       ),
       body: SafeArea(
           child: Stack(
@@ -36,7 +57,7 @@ class DetailScreen extends StatelessWidget {
             boxFit: BoxFit.cover,
             opacity: 0.5,
           ),
-          _DetailDragonView(dragonSend)
+          _DetailDragonView(descriptionProvider)
         ],
       )),
     );
@@ -44,13 +65,11 @@ class DetailScreen extends StatelessWidget {
 }
 
 class _DetailDragonView extends StatelessWidget {
-  final Dragon dragon;
-  const _DetailDragonView(this.dragon);
+  final DetailProvider descriptionProvider;
+  const _DetailDragonView(this.descriptionProvider);
 
   @override
   Widget build(BuildContext context) {
-    final descriptionProvider = context.watch<DetailProvider>();
-    descriptionProvider.setParameters(dragon);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: SingleChildScrollView(
@@ -79,8 +98,9 @@ class _DetailDragonView extends StatelessWidget {
               buttonColor: ColorsFundation.buttonAtackColor!,
               textButton: 'Ataque',
               onClick: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(dragon.launchAttack())));
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content:
+                        Text(descriptionProvider.dragonSend.launchAttack())));
               },
             ),
             const SizedBox(height: 10),
@@ -89,7 +109,10 @@ class _DetailDragonView extends StatelessWidget {
               textButton: 'Editar',
               onClick: () {
                 context.pushNamed(FormScreen.name,
-                    extra: descriptionProvider.dragonSend);
+                    extra: FormScreenParams(
+                        fromHome: false,
+                        dragon: descriptionProvider.dragonSend,
+                        detailProvider: descriptionProvider));
               },
             ),
             const SizedBox(height: 10),

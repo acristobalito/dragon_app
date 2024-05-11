@@ -28,7 +28,9 @@ class DragonListProvider extends ChangeNotifier {
 
   void updateDragon(Dragon newDragon, Dragon tarjetDragon) {
     final position = dragonsList.indexOf(tarjetDragon);
-    dragonsList[position] = newDragon;
-    notifyListeners();
+    if (position >= 0) {
+      dragonsList[position] = newDragon;
+      notifyListeners();
+    }
   }
 }
