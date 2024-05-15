@@ -1,9 +1,10 @@
-import 'package:dragon_store/domain/entities/dragon_element.dart';
+import 'package:dragon_store/domain/entities/dragon_element_entity.dart';
+import 'package:dragon_store/domain/utils/dragon_element_utils.dart';
 import 'package:flutter/material.dart';
 
 class ElementPicker extends StatelessWidget {
-  final List<ElementDragon> elements;
-  final Function(ElementDragon) onSelectElement;
+  final List<DragonElementEntity> elements;
+  final Function(DragonElementEntity) onSelectElement;
 
   const ElementPicker(
       {super.key, required this.elements, required this.onSelectElement});
@@ -31,7 +32,7 @@ class ElementPicker extends StatelessWidget {
 }
 
 class _CustomButtonIcon extends StatelessWidget {
-  final ElementDragon element;
+  final DragonElementEntity element;
   final VoidCallback onClick;
 
   const _CustomButtonIcon({
@@ -44,7 +45,7 @@ class _CustomButtonIcon extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(25),
       child: Material(
-        color: ElementDragonUtils.getColorElement(element).withOpacity(0.5),
+        color: DragonElementUtils.getColorElement(element).withOpacity(0.5),
         child: InkWell(
             onTap: () {
               onClick.call();
@@ -52,7 +53,7 @@ class _CustomButtonIcon extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Image(
-                image: AssetImage(ElementDragonUtils.getIcon(element)),
+                image: AssetImage(DragonElementUtils.getIcon(element)),
                 height: 40,
                 width: 40,
               ),

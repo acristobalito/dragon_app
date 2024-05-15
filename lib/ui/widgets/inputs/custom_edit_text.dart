@@ -1,24 +1,27 @@
 import 'package:dragon_store/config/foundations/typo.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CustomEditText extends StatelessWidget {
   final String hintText;
   final String? initialText;
   final int lines;
   final TextInputType keyBoardType;
-  final Function(String) onChangeValue;
+  final textController = TextEditingController();
+  final Function(String?) onChangeValue;
 
-  const CustomEditText(
+  CustomEditText(
       {super.key,
       required this.hintText,
       required this.onChangeValue,
       this.lines = 1,
       this.keyBoardType = TextInputType.name,
-      this.initialText});
+      this.initialText}) {
+    textController.text = initialText ?? '';
+  }
 
   @override
   Widget build(BuildContext context) {
-    final focusNode = FocusNode();
     final outlinedInputBorder = UnderlineInputBorder(
         borderSide: const BorderSide(color: Colors.transparent),
         borderRadius: BorderRadius.circular(lines > 1 ? 18 : 25));
@@ -28,18 +31,25 @@ class CustomEditText extends StatelessWidget {
         focusedBorder: outlinedInputBorder,
         filled: true);
     return TextFormField(
-      initialValue: initialText,
-      style:
-          const TextStyle(fontFamily: TypographyFoundation.poppinsFontFamily),
-      keyboardType: keyBoardType,
-      minLines: lines,
-      maxLines: lines,
-      focusNode: focusNode,
-      onTapOutside: (event) => focusNode.unfocus(),
-      decoration: inputDecoration,
-      onChanged: (value) {
-        onChangeValue.call(value);
-      },
-    );
+        style:
+            const TextStyle(fontFamily: TypographyFoundation.poppinsFontFamily),
+        keyboardType: keyBoardType,
+        minLines: lines,
+        maxLines: lines,
+        controller: textController,
+        decoration: inputDecoration,
+        onChanged: (_) {
+          onChangeValue.call(textController.text);
+        },
+        inputFormatters: [
+          FilteringTextInputFormatter.allow(
+              (keyBoardType == TextInputType.number)
+                  ? RegExp(r"^[1-9][0-9]?$|^100$")
+                  : RegExp(r".")),
+          LengthLimitingTextInputFormatter((lines != 1) ? 200 : 30)
+        ],
+        validator: (value) => (value == null || value.isEmpty)
+            ? 'Los campos no pueden estar vacíos'
+            : null);
   }
 }

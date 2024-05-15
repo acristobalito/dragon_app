@@ -1,9 +1,9 @@
-import 'package:dragon_store/domain/entities/dragon.dart';
-import 'package:dragon_store/ui/providers/detail_provider.dart';
+import 'package:dragon_store/domain/entities/dragon_entity.dart';
+import 'package:dragon_store/domain/providers/detail_provider.dart';
 
 class FormScreenParams {
   bool? fromHome;
-  Dragon? dragon;
+  DragonEntity? dragon;
   DetailProvider? detailProvider;
   FormScreenParams({this.fromHome, this.dragon, this.detailProvider});
 }

@@ -1,10 +1,11 @@
 import 'package:dragon_store/config/foundations/typo.dart';
-import 'package:dragon_store/domain/entities/dragon.dart';
-import 'package:dragon_store/domain/entities/dragon_element.dart';
+import 'package:dragon_store/domain/entities/dragon_entity.dart';
+import 'package:dragon_store/domain/entities/dragon_element_entity.dart';
+import 'package:dragon_store/domain/utils/dragon_element_utils.dart';
 import 'package:flutter/material.dart';
 
 class DragonItemCard extends StatelessWidget {
-  final Dragon dragon;
+  final DragonEntity dragon;
   final VoidCallback onTap;
   const DragonItemCard({super.key, required this.dragon, required this.onTap});
 
@@ -69,25 +70,26 @@ class _InfoViewText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Text(
-            '$subLabel: ',
-            style: const TextStyle(
-                fontFamily: TypographyFoundation.poppinsFontFamily,
-                fontWeight: FontWeight.w400,
-                fontSize: 12),
-          ),
+        Text(
+          '$subLabel: ',
+          style: const TextStyle(
+              fontFamily: TypographyFoundation.poppinsFontFamily,
+              fontWeight: FontWeight.w400,
+              fontSize: 12),
         ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Text(
-            data,
-            style: const TextStyle(
-                fontFamily: TypographyFoundation.poppinsFontFamily,
-                fontWeight: FontWeight.w600,
-                fontSize: 15),
+        Flexible(
+          child: Container(
+            padding: const EdgeInsets.only(right: 90),
+            child: Text(
+              data,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                  fontFamily: TypographyFoundation.poppinsFontFamily,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15),
+            ),
           ),
         )
       ],
@@ -97,7 +99,7 @@ class _InfoViewText extends StatelessWidget {
 
 class _ElementViewText extends StatelessWidget {
   final String subLabel;
-  final ElementDragon element;
+  final DragonElementEntity element;
   const _ElementViewText({required this.subLabel, required this.element});
 
   @override
@@ -117,12 +119,12 @@ class _ElementViewText extends StatelessWidget {
         Align(
           alignment: Alignment.bottomCenter,
           child: Text(
-            ElementDragonUtils.getStringElement(element),
+            DragonElementUtils.getStringElement(element),
             style: TextStyle(
                 fontFamily: TypographyFoundation.poppinsFontFamily,
                 fontWeight: FontWeight.w600,
                 fontSize: 15,
-                color: ElementDragonUtils.getColorElement(element)),
+                color: DragonElementUtils.getColorElement(element)),
           ),
         )
       ],

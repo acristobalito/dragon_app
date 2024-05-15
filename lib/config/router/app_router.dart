@@ -1,4 +1,4 @@
-import 'package:dragon_store/domain/entities/dragon.dart';
+import 'package:dragon_store/domain/entities/dragon_entity.dart';
 import 'package:dragon_store/domain/entities/form_screen_params.dart';
 import 'package:dragon_store/ui/screens/screens.dart';
 import 'package:go_router/go_router.dart';
@@ -13,7 +13,7 @@ final appRouter = GoRouter(initialLocation: HomeScreen.path, routes: [
       path: DetailScreen.path,
       name: DetailScreen.name,
       builder: (context, state) {
-        final dragonSend = state.extra as Dragon;
+        final dragonSend = state.extra as DragonEntity;
         return DetailScreen(dragonSend: dragonSend);
       }),
   GoRoute(
