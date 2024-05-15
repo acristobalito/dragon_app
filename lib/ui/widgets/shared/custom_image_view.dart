@@ -1,9 +1,10 @@
 import 'package:dragon_store/config/foundations/colors.dart';
-import 'package:dragon_store/domain/entities/dragon_element.dart';
+import 'package:dragon_store/domain/entities/dragon_element_entity.dart';
+import 'package:dragon_store/domain/utils/dragon_element_utils.dart';
 import 'package:flutter/material.dart';
 
 class CustomImageView extends StatelessWidget {
-  final ElementDragon element;
+  final DragonElementEntity element;
   final bool onlyImage;
   final double size;
   const CustomImageView(
@@ -20,7 +21,7 @@ class CustomImageView extends StatelessWidget {
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: !onlyImage
-              ? ElementDragonUtils.getColorElement(element).withOpacity(0.5)
+              ? DragonElementUtils.getColorElement(element).withOpacity(0.5)
               : null,
           border: !onlyImage
               ? Border.all(color: ColorsFundation.secondaryColor, width: 3)
@@ -28,7 +29,7 @@ class CustomImageView extends StatelessWidget {
           borderRadius: const BorderRadius.all(Radius.circular(25)),
         ),
         child: Image(
-          image: AssetImage(ElementDragonUtils.getImageDragon(element)),
+          image: AssetImage(DragonElementUtils.getImageDragon(element)),
           height: size,
           width: size,
         ),

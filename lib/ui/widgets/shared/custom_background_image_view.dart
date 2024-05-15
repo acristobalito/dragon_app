@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class CustomBackgroundImage extends StatelessWidget {
+class CustomBackgroundImageView extends StatelessWidget {
   final String pathImage;
   final BoxFit? boxFit;
   final double opacity;
-  const CustomBackgroundImage(
+  const CustomBackgroundImageView(
       {super.key, required this.pathImage, this.boxFit, this.opacity = 0.2});
 
   @override
